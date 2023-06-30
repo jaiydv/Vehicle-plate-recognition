@@ -64,6 +64,5 @@ If you have any questions, suggestions, or feedback, you can reach out to the pr
 
 Feel free to get in touch!
 
----
-*Note: Update the sections in square brackets with the relevant information specific to your project.*
+
 
