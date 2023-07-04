@@ -25,7 +25,7 @@ To set up the environment for running this project, follow these steps:
    pip install opencv-python tensorflow keras pytesseract
    ```
 
-3. The weights are stored in yolo.pt file
+3. The weights are stored in anpr_best.pt file
 ## Usage
 
 To use the vehicle plate recognition system, follow these steps:
