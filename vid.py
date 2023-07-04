@@ -11,20 +11,7 @@ path_to_tesseract = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 #Define path to image
 path_to_image = 'test\Screenshot (171).png'
 
-#Point tessaract_cmd to tessaract.exe
-
-
-def image_to_text(cropped_image):
-
-    pytesseract.tesseract_cmd = path_to_tesseract
-
-    #Open image with PIL
-    #img = 
-    #img=cv2.imread(cropped_image)
-    #Extract text from image
-    text = pytesseract.image_to_string(cropped_image)
-    print(text)
-    return text
+            
 def detectx (frame, model):
     frame = [frame]
     print(f"[INFO] Detecting. . . ")
@@ -52,24 +39,29 @@ def plot_boxes(results, frame,classes):
             print(f"[INFO] Extracting BBox coordinates. . . ")
             x1, y1, x2, y2 = int(row[0]*x_shape), int(row[1]*y_shape), int(row[2]*x_shape), int(row[3]*y_shape) ## BBOx coordniates
             text_d = classes[int(labels[i])]
-
             
             if text_d == 'license_plate':
                 cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2) ## BBox
                 cv2.rectangle(frame, (x1, y1-20), (x2, y1), (0, 255,0), -1) ## for text label background
 
-                
                 cv2.putText(frame, text_d + f" {round(float(row[4]),2)}", (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(255,255,255), 2)
 
-    
-                
                 cv2.putText(frame, text_d + f" {round(float(row[4]),2)}", (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(255,255,255), 2)
-                cropped_img=frame[y1:y2,x1:x2]
-                text = image_to_text(cropped_img)
-                cv2.putText(frame, text, (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(255,255,255), 2)
 
-
+                #code for ocr
+                plate = frame[y1:y2, x1:x2]
+                
+                pytesseract.tesseract_cmd = path_to_tesseract
+                predicted_result = pytesseract.image_to_string(plate, lang ='eng', config ='--oem 3 --psm 7 -c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+      
+                text = "".join(predicted_result.split()).replace(":", "").replace("-", "")
+                print(text)
+                print(predicted_result)
+                plot_img = frame.copy()
+                frame = cv2.putText(plot_img, f"{text}", (x1-20, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 1,(255,255,255), 2)
+                # frame=plate
     return frame
+
 def main(img_path=None, vid_path=None,vid_out = None):
 
     print(f"[INFO] Loading model... ")
@@ -154,4 +146,4 @@ def main(img_path=None, vid_path=None,vid_out = None):
 
 
 print("hi")
-main(vid_path="test\TEST.mp4")
+main(vid_path="test\pexels-hudson-coelho-5579754.mp4")
